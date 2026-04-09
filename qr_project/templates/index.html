@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Forge</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0a0f1f, #101a3a);
+    color: white;
+}
+
+/* NAVBAR */
+nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 60px;
+}
+nav h1 { color: #ff4d6d; }
+nav a {
+    margin: 0 15px;
+    color: white;
+    cursor: pointer;
+}
+
+/* HERO */
+.hero {
+    text-align: center;
+    padding: 80px 20px;
+}
+.hero h2 { font-size: 42px; }
+
+/* STATS */
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 30px;
+}
+.stat {
+    background: #141a2f;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* OPTIONS */
+.options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+    gap: 20px;
+    padding: 40px;
+}
+.option {
+    background: #141a2f;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.option:hover {
+    transform: translateY(-5px);
+}
+.option.active {
+    background: linear-gradient(45deg, #ff4d6d, #ff7eb3);
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #ff4d6d88;
+}
+
+/* GENERATOR */
+.generator {
+    display: flex;
+    gap: 20px;
+    padding: 40px;
+}
+.box {
+    flex: 1;
+    background: #141a2f;
+    padding: 20px;
+    border-radius: 15px;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from {opacity:0; transform: translateY(10px);}
+    to {opacity:1; transform: translateY(0);}
+}
+
+button {
+    background: linear-gradient(45deg, #ff4d6d, #ff7eb3);
+    border: none;
+    padding: 12px;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* FOOTER */
+footer {
+    text-align: center;
+    padding: 30px;
+    opacity: 0.6;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav>
+    <h1>🚀 QR Forge</h1>
+    <div>
+        <a onclick="scrollToSection('home')">Home</a>
+        <a onclick="scrollToSection('generator')">Generate</a>
+        <a onclick="scrollToSection('about')">About</a>
+        <a onclick="scrollToSection('contact')">Contact</a>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section id="home" class="hero">
+    <h2>Create Powerful QR Codes</h2>
+    <p>Upload files, text, links and generate QR instantly</p>
+
+    <div class="stats">
+        <div class="stat">🔥 10K+ QR Generated</div>
+        <div class="stat">👥 99+ Active Users</div>
+        <div class="stat">⚡ Fast & Secure</div>
+    </div>
+</section>
+
+<!-- OPTIONS -->
+<div class="options">
+    <div class="option active" onclick="selectType('image', this)">🖼 Image</div>
+    <div class="option" onclick="selectType('pdf', this)">📄 PDF</div>
+    <div class="option" onclick="selectType('docx', this)">📃 DOCX</div>
+    <div class="option" onclick="selectType('video', this)">🎥 Video</div>
+    <div class="option" onclick="selectType('link', this)">🔗 Link</div>
+    <div class="option" onclick="selectType('text', this)">📝 Text</div>
+</div>
+
+<!-- GENERATOR -->
+<section id="generator" class="generator">
+
+    <div class="box">
+        <h3 id="inputTitle">Upload Image</h3>
+
+        <input type="file" id="fileInput"><br><br>
+
+        <textarea id="textInput" placeholder="Enter text..."
+            style="display:none;width:100%;height:100px;"></textarea><br>
+
+        <button onclick="generate()">Generate QR</button>
+    </div>
+
+    <div class="box" id="qrBox">
+        <h3>QR Code</h3>
+    </div>
+
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="hero">
+    <h2>About Me</h2>
+    <p>Hi, I'm Priyanshu — building modern web tools 🚀</p>
+    <p>Email: priyanshutiv@gmail.com</p>
+    <p>Phone: 9508148021</p>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="hero">
+    <h2>Connect With Me</h2>
+    <p>Instagram | GitHub | LinkedIn</p>
+</section>
+
+<footer>
+    © 2026 QR Forge | Built by Priyanshu
+</footer>
+
+<script>
+
+let currentType = "image";
+
+function scrollToSection(id){
+    document.getElementById(id).scrollIntoView({behavior:"smooth"});
+}
+
+function selectType(type, el){
+
+    currentType = type;
+
+    document.querySelectorAll(".option").forEach(o => o.classList.remove("active"));
+    el.classList.add("active");
+
+    const fileInput = document.getElementById("fileInput");
+    const textInput = document.getElementById("textInput");
+    const title = document.getElementById("inputTitle");
+
+    fileInput.style.display = "none";
+    textInput.style.display = "none";
+
+    if(type === "text" || type === "link"){
+        textInput.style.display = "block";
+        title.innerText = type === "text" ? "Enter Text" : "Enter Link";
+    }
+    else {
+        fileInput.style.display = "block";
+
+        if(type === "image"){
+            fileInput.accept = "image/*";
+            title.innerText = "Upload Image";
+        }
+        if(type === "pdf"){
+            fileInput.accept = ".pdf";
+            title.innerText = "Upload PDF";
+        }
+        if(type === "docx"){
+            fileInput.accept = ".doc,.docx";
+            title.innerText = "Upload DOCX";
+        }
+        if(type === "video"){
+            fileInput.accept = "video/*";
+            title.innerText = "Upload Video";
+        }
+    }
+}
+
+async function generate(){
+
+    const file = document.getElementById("fileInput").files[0];
+    const text = document.getElementById("textInput").value;
+    const qrBox = document.getElementById("qrBox");
+
+    qrBox.innerHTML = "<p>Generating...</p>";
+
+    if(currentType === "text" || currentType === "link"){
+
+        const res = await fetch("/api/text", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({text})
+        });
+
+        const data = await res.json();
+
+        qrBox.innerHTML = `
+            <h3>QR Code</h3>
+            <img src="${data.qr_data}" width="200">
+        `;
+    }
+
+    else {
+
+        if(!file){
+            alert("Please upload file");
+            return;
+        }
+
+        const fd = new FormData();
+        fd.append("file", file);
+
+        const res = await fetch("/api/upload", {
+            method:"POST",
+            body: fd
+        });
+
+        const data = await res.json();
+
+        qrBox.innerHTML = `
+            <h3>QR Code</h3>
+            <img src="${data.qr_data}" width="200"><br>
+            <a href="${data.metadata.url}" target="_blank">Open File</a>
+        `;
+    }
+}
+
+</script>
+
+</body>
+</html>
