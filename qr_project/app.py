@@ -10,7 +10,8 @@ app = Flask(__name__, template_folder="templates", static_folder="static")
 # ================= CONFIG =================
 BASE_URL = os.environ.get("BASE_URL", "")
 
-UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'static/uploads')
+QR_FOLDER = os.path.join(os.getcwd(), 'static/qrcodes')
 QR_FOLDER = 'static/qrcodes'
 DB_FOLDER = 'database'
 DB_PATH = os.path.join(DB_FOLDER, 'qr_records.db')
