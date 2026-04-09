@@ -12,7 +12,6 @@ BASE_URL = os.environ.get("BASE_URL", "")
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'static/uploads')
 QR_FOLDER = os.path.join(os.getcwd(), 'static/qrcodes')
-QR_FOLDER = 'static/qrcodes'
 DB_FOLDER = 'database'
 DB_PATH = os.path.join(DB_FOLDER, 'qr_records.db')
 
@@ -57,36 +56,36 @@ def home():
 @app.route('/api/upload', methods=['POST'])
 def upload():
     try:
+        print("🔥 Upload request received")
+
         if 'file' not in request.files:
             return jsonify({"error": "No file uploaded"}), 400
 
         file = request.files['file']
-
-        if file.filename == '':
-            return jsonify({"error": "Empty filename"}), 400
+        print("📁 File:", file.filename)
 
         uid = str(uuid.uuid4())
         filename = secure_filename(file.filename)
         stored_name = uid + "_" + filename
 
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], stored_name)
+        print("💾 Saving to:", filepath)
+
         file.save(filepath)
 
-        base = BASE_URL if BASE_URL else request.host_url.rstrip("/")
+        base = request.host_url.rstrip("/")
         file_url = f"{base}/static/uploads/{stored_name}"
 
+        print("🔗 File URL:", file_url)
+
         qr_img = qrcode.make(file_url)
+
         qr_filename = uid + ".png"
         qr_path = os.path.join(app.config['QR_FOLDER'], qr_filename)
-        qr_img.save(qr_path)
 
-        db = get_db()
-        db.execute(
-            "INSERT INTO qr_records (uid, original_name, stored_name, qr_path) VALUES (?, ?, ?, ?)",
-            (uid, filename, stored_name, qr_filename)
-        )
-        db.commit()
-        db.close()
+        print("🧾 QR path:", qr_path)
+
+        qr_img.save(qr_path)
 
         return jsonify({
             "success": True,
@@ -98,6 +97,7 @@ def upload():
         })
 
     except Exception as e:
+        print("❌ ERROR:", str(e))
         return jsonify({"error": str(e)}), 500
 
 
